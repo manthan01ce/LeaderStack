@@ -26,7 +26,7 @@ from pydantic import BaseModel, field_validator, model_validator
 async def redis_exception_handler(request: Request, exc: redis.RedisError):
     return JSONResponse(
         status_code=503,
-        content={"detail": "Service temporarily unavailable. Database connection failed."}
+        content={"detail": "Service temporarily unavailable. Database connection failed. (Ensure REDIS_URL is set in your Render Environment Variables)"}
     )
 
 # ── Configuration ─────────────────────────────────────────────────
@@ -612,7 +612,7 @@ def health():
         r.ping()
         return JSONResponse(content={"status": "ok", "redis": "healthy", "sseClients": len(_sse_queues), "timestamp": timestamp})
     except redis.RedisError as exc:
-        return JSONResponse(status_code=503, content={"status": "degraded", "redis": f"unhealthy: {exc}", "timestamp": timestamp})
+        return JSONResponse(status_code=503, content={"status": "degraded", "redis": f"unhealthy: {exc} (Ensure REDIS_URL is configured)", "timestamp": timestamp})
 
 @app.get("/contests", dependencies=[Depends(RateLimit(60, 60, "read"))])
 def list_contests():
