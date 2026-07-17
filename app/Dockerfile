@@ -11,11 +11,11 @@ WORKDIR /app
 
 # Install Python dependencies first (leverages Docker layer cache)
 # If only main.py changes, this layer is not re-built
-COPY requirements.txt .
+COPY app/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
-COPY main.py .
+COPY app/main.py .
 
 # Expose the API port
 EXPOSE 8000

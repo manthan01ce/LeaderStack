@@ -14,7 +14,6 @@ services:
     name: leaderstack-api
     env: docker
     dockerfilePath: ./app/Dockerfile
-    dockerContext: ./app
     plan: free
     healthCheckPath: /health
     envVars:
