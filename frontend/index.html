@@ -2,420 +2,207 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Real-time contest leaderboard dashboard. Track rankings, submit scores, and search participants live." />
-  <title>Contest LeaderStack - Live Rankings</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Real-time contest leaderboard system powered by FastAPI and Redis." />
+  <title>LeaderStack — Real-Time Ranking Engine</title>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="landing.css" />
 </head>
 <body>
-
-
-
-  <div class="app-layout">
-    <!-- LEFT NAVIGATION RAIL -->
-    <aside class="left-sidebar">
-      <div class="sidebar-logo">⚡</div>
-      <nav class="side-nav">
-        <button class="nav-item active" title="Leaderboard">📊</button>
-
-      </nav>
-    </aside>
-
-    <div class="main-wrapper">
-      <!-- ─── HEADER ─────────────────────────────────────────── -->
-      <header class="site-header">
-    <div class="header-inner">
-      <div class="brand">
-        <span class="brand-icon" aria-hidden="true">⚡</span>
-        <div>
-          <h1 class="brand-title">Contest LeaderStack</h1>
-          <div class="brand-sub">
-            <select id="contestSelector" class="contest-dropdown" aria-label="Select Contest">
-              <!-- Options populated by JS -->
-            </select>
-            <span id="contestStatusBadge" class="contest-status-badge">...</span>
-          </div>
-        </div>
+  
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-inner container">
+      <div class="nav-brand">
+        <span class="brand-icon">⚡</span>
+        <span class="brand-text">LeaderStack Engine</span>
       </div>
+      <div class="nav-links">
+        <a href="#contests" class="nav-link">Contests</a>
+        <a href="#features" class="nav-link">Features</a>
+        <a href="dashboard.html" class="btn btn-secondary btn-sm" style="border-radius: 6px;">Admin Dashboard</a>
+      </div>
+    </div>
+  </nav>
 
-      <div class="header-meta">
-        <button class="btn btn-primary btn-sm" id="openNewContestBtn">+ New Contest</button>
-        <div class="status-badge" id="connectionStatus">
-          <span class="status-dot" id="statusDot"></span>
-          <span id="statusText">Connecting…</span>
+  <!-- Hero Section -->
+  <section class="hero container reveal">
+    <div class="hero-bg-gradient"></div>
+    <div class="hero-content">
+      <a href="#contests" class="hero-pill">
+        <span class="pill-badge">New</span> Introducing Contest Hub ➔
+      </a>
+      <h1 class="hero-title">Real-time rankings <span class="text-gradient">at scale.</span></h1>
+      <p class="hero-subtitle">
+        A high-performance leaderboard system powered by Redis and FastAPI. Manage contests, track live rank movements, and push updates instantly to thousands of clients.
+      </p>
+      <div class="hero-ctas">
+        <a href="dashboard.html" class="btn btn-primary">Open Live Dashboard</a>
+        <a href="#contests" class="btn btn-secondary">Explore Contests</a>
+      </div>
+    </div>
+
+    <!-- Live Product Preview -->
+    <div class="hero-visual">
+      <div class="mock-window">
+        <div class="mock-header">
+          <div class="mock-dots"><span></span><span></span><span></span></div>
+          <div class="mock-title">Live Preview</div>
         </div>
-        <div class="refresh-info">
-          <span class="refresh-label">Auto-refresh</span>
-          <span class="refresh-countdown" id="refreshCountdown">3s</span>
+        <div class="mock-body">
+          <div class="mock-table-header">
+            <span>Rank</span>
+            <span>Participant</span>
+            <span>Score</span>
+            <span>Move</span>
+          </div>
+          <div class="mock-rows" id="mockRows">
+            <!-- Injected by JS -->
+          </div>
         </div>
       </div>
     </div>
-  </header>
+  </section>
 
-  <!-- ─── MAIN ───────────────────────────────────────────── -->
-  <main class="main-content">
-
-    <!-- STATS ROW -->
-    <section class="stats-row" aria-label="Summary statistics">
-      <div class="stat-card" id="statTotal">
-        <div class="stat-icon">🏆</div>
-        <div class="stat-info">
-          <span class="stat-value" id="totalParticipants">—</span>
-          <span class="stat-label">Participants</span>
-        </div>
+  <!-- Contests Hub -->
+  <div id="contests" class="contests-hub">
+    
+    <!-- Ongoing Contests Section -->
+    <section class="contest-section ongoing-section container reveal">
+      <div class="section-header">
+        <span class="eyebrow live-eyebrow"><span class="live-dot"></span> Live Now</span>
+        <h2 class="section-title">Ongoing Contests</h2>
+        <p class="section-subtitle">Real-time action happening right now.</p>
       </div>
-      <div class="stat-card" id="statTopScore">
-        <div class="stat-icon">🥇</div>
-        <div class="stat-info">
-          <span class="stat-value" id="topScore">—</span>
-          <span class="stat-label">Top Score</span>
-        </div>
-      </div>
-      <div class="stat-card" id="statLeader">
-        <div class="stat-icon">👑</div>
-        <div class="stat-info">
-          <span class="stat-value mono" id="leaderName">—</span>
-          <span class="stat-label">Current Leader</span>
-        </div>
-      </div>
-      <div class="stat-card" id="statLastUpdated">
-        <div class="stat-icon">🕐</div>
-        <div class="stat-info">
-          <span class="stat-value" id="lastUpdated">—</span>
-          <span class="stat-label">Last Updated</span>
-        </div>
+      <div id="ongoingContestsGrid" class="contest-grid">
+        <!-- Injected by JS -->
       </div>
     </section>
 
-    <!-- TOP 3 PODIUM CARDS -->
-    <section class="podium-section hidden" id="podiumSection" aria-label="Top 3 Winners">
-      <div class="podium-cards" id="podiumCards">
-        <!-- Cards injected by JS -->
+    <!-- Upcoming Contests Section -->
+    <section class="contest-section upcoming-section container reveal">
+      <div class="section-header">
+        <span class="eyebrow">Scheduled</span>
+        <h2 class="section-title">Upcoming Contests</h2>
+        <p class="section-subtitle">Prepare for the next big event.</p>
+      </div>
+      <div id="upcomingContestsGrid" class="contest-grid">
+        <!-- Injected by JS -->
       </div>
     </section>
 
-    <!-- MAIN GRID -->
-    <div class="dashboard-grid full-width">
-
-      <!-- ── LEADERBOARD TABLE ─────────────────────── -->
-      <section class="panel leaderboard-panel" aria-labelledby="leaderboardHeading">
-        <div class="panel-header">
-          <h2 id="leaderboardHeading" class="panel-title">
-            <span class="panel-title-icon">📊</span>
-            <span id="leaderboardHeadingText">Top 10 Rankings</span>
-          </h2>
-          <button class="btn btn-ghost btn-sm" id="manualRefreshBtn" title="Refresh now" aria-label="Refresh leaderboard">
-            <span class="refresh-icon" id="refreshIcon">↻</span>
-            Refresh
-          </button>
-        </div>
-
-        <!-- Board selector tabs -->
-        <div class="board-tabs" id="boardTabs" role="tablist" aria-label="Leaderboard time period">
-          <button class="board-tab active" data-board="all"    role="tab" aria-selected="true">All Time</button>
-          <button class="board-tab"        data-board="daily"  role="tab" aria-selected="false">Daily</button>
-          <button class="board-tab"        data-board="weekly" role="tab" aria-selected="false">Weekly</button>
-        </div>
-
-        <!-- Loading skeleton -->
-        <div class="skeleton-container" id="leaderboardSkeleton" aria-label="Loading leaderboard...">
-          <div class="skeleton-row" aria-hidden="true"></div>
-          <div class="skeleton-row" aria-hidden="true"></div>
-          <div class="skeleton-row" aria-hidden="true"></div>
-          <div class="skeleton-row" aria-hidden="true"></div>
-          <div class="skeleton-row" aria-hidden="true"></div>
-        </div>
-
-        <!-- Error state -->
-        <div class="error-state hidden" id="leaderboardError" role="alert">
-          <div class="error-icon">⚠️</div>
-          <p class="error-title">Failed to load leaderboard</p>
-          <p class="error-msg" id="leaderboardErrorMsg">Could not connect to server.</p>
-          <button class="btn btn-primary btn-sm" id="retryBtn">Retry</button>
-        </div>
-
-        <!-- Empty state -->
-        <div class="empty-state hidden" id="leaderboardEmpty">
-          <div class="empty-icon">🎯</div>
-          <p class="empty-title">No participants yet</p>
-          <p class="empty-msg">Submit a score to get started!</p>
-        </div>
-
-        <!-- Table -->
-        <div class="table-wrapper hidden" id="leaderboardTableWrapper">
-          <table class="leaderboard-table" id="leaderboardTable" aria-label="Leaderboard rankings">
-            <thead>
-              <tr>
-                <th scope="col" class="col-rank">Rank</th>
-                <th scope="col" class="col-participant">Participant</th>
-                <th scope="col" class="col-score">Score</th>
-                <th scope="col" class="col-movement">Move</th>
-                <th scope="col" class="col-time">Submitted</th>
-                <th scope="col" class="col-bar">Progress</th>
-              </tr>
-            </thead>
-            <tbody id="leaderboardBody">
-              <!-- Rows injected by JS -->
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- ── BOTTOM PANELS ───────────────────────────────── -->
-      <div class="bottom-panels">
-
-        <!-- SUBMIT SCORE PANEL -->
-        <section class="panel submit-panel" aria-labelledby="submitHeading">
-          <div class="panel-header">
-            <h2 id="submitHeading" class="panel-title">
-              <span class="panel-title-icon">✏️</span>
-              Submit Score
-            </h2>
-          </div>
-
-          <form class="score-form" id="scoreForm" novalidate>
-            <div class="form-group">
-              <label class="form-label" for="participantIdInput">Participant ID</label>
-              <input
-                class="form-input"
-                type="text"
-                id="participantIdInput"
-                name="participantId"
-                placeholder="e.g. user42"
-                autocomplete="off"
-                required
-              />
-              <span class="form-hint">Alphanumeric, no spaces</span>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label" for="scoreInput">Score</label>
-              <input
-                class="form-input"
-                type="number"
-                id="scoreInput"
-                name="score"
-                placeholder="e.g. 350"
-                min="0"
-                required
-              />
-              <span class="form-hint">Enter a non-negative integer</span>
-            </div>
-
-            <button class="btn btn-primary btn-full" type="submit" id="submitBtn">
-              <span class="btn-text">Submit Score</span>
-              <span class="btn-spinner hidden" aria-hidden="true">⏳</span>
-            </button>
-          </form>
-
-          <!-- Submit feedback -->
-          <div class="feedback hidden" id="submitFeedback" role="status" aria-live="polite">
-            <div class="feedback-icon" id="submitFeedbackIcon"></div>
-            <div class="feedback-content">
-              <p class="feedback-title" id="submitFeedbackTitle"></p>
-              <p class="feedback-body" id="submitFeedbackBody"></p>
-            </div>
-          </div>
-        </section>
-
-        <!-- SEARCH PANEL -->
-        <section class="panel search-panel" aria-labelledby="searchHeading">
-          <div class="panel-header">
-            <h2 id="searchHeading" class="panel-title">
-              <span class="panel-title-icon">🔍</span>
-              Search Participant
-            </h2>
-          </div>
-
-          <form class="search-form" id="searchForm" novalidate>
-            <div class="search-input-row">
-              <input
-                class="form-input"
-                type="text"
-                id="searchInput"
-                name="searchId"
-                placeholder="Enter participant ID…"
-                autocomplete="off"
-                required
-              />
-              <button class="btn btn-accent" type="submit" id="searchBtn">
-                <span class="btn-text">Look Up</span>
-                <span class="btn-spinner hidden" aria-hidden="true">⏳</span>
-              </button>
-            </div>
-          </form>
-
-          <!-- Search result card -->
-          <div class="result-card hidden" id="searchResult" role="status" aria-live="polite">
-            <div class="result-rank-badge" id="resultRankBadge"></div>
-            <div class="result-details">
-              <span class="result-id mono" id="resultId"></span>
-              <div class="result-score-row">
-                <span class="result-score" id="resultScore"></span>
-                <span class="percentile-badge hidden" id="resultPercentile"></span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Search error -->
-          <div class="search-error hidden" id="searchError" role="alert">
-            <span class="search-error-icon">⚠️</span>
-            <span id="searchErrorMsg"></span>
-          </div>
-
-          <!-- Around-You neighbors -->
-          <div class="neighbors-section hidden" id="neighborsSection" aria-live="polite">
-            <p class="neighbors-label">Around <span class="mono" id="neighborsTargetId"></span></p>
-            <table class="neighbors-table" aria-label="Nearby rankings">
-              <tbody id="neighborsBody"></tbody>
-            </table>
-          </div>
-
-        </section><!-- /.search-panel -->
-
-        <!-- NOTIFICATIONS PANEL -->
-        <section class="panel notifications-panel" aria-labelledby="notificationsHeading">
-          <div class="panel-header">
-            <h2 id="notificationsHeading" class="panel-title">
-              <span class="panel-title-icon">🔔</span>
-              Notifications
-            </h2>
-          </div>
-          <ul class="notifications-list" id="notificationsList" aria-label="Recent notifications">
-            <li class="notifications-empty" id="notificationsEmpty">No recent notifications</li>
-          </ul>
-        </section>
-
-        <!-- ACTIVITY LOG PANEL -->
-        <section class="panel activity-panel" aria-labelledby="activityHeading">
-          <div class="panel-header">
-            <h2 id="activityHeading" class="panel-title">
-              <span class="panel-title-icon">📝</span>
-              Activity Log
-            </h2>
-            <button class="btn btn-ghost btn-sm" id="clearLogBtn" aria-label="Clear activity log">Clear</button>
-          </div>
-          <ul class="activity-list" id="activityList" aria-label="Recent activity">
-            <li class="activity-empty" id="activityEmpty">No activity yet…</li>
-          </ul>
-        </section>
-
-        <!-- SYSTEM STATUS PANEL -->
-        <section class="panel metrics-panel" aria-labelledby="metricsHeading">
-          <div class="panel-header">
-            <h2 id="metricsHeading" class="panel-title">
-              <span class="panel-title-icon">📡</span>
-              System Status
-            </h2>
-          </div>
-          <div class="metrics-grid">
-            <div class="metric-item">
-              <span class="metric-value" id="metricTotal">—</span>
-              <span class="metric-label">Submissions</span>
-            </div>
-            <div class="metric-item">
-              <span class="metric-value" id="metricAccepted">—</span>
-              <span class="metric-label">Accepted</span>
-            </div>
-            <div class="metric-item">
-              <span class="metric-value" id="metricRejected">—</span>
-              <span class="metric-label">Rejected</span>
-            </div>
-            <div class="metric-item">
-              <span class="metric-value" id="metricBoardSize">—</span>
-              <span class="metric-label">Board Size</span>
-            </div>
-            <div class="metric-item">
-              <span class="metric-value" id="metricSseClients">—</span>
-              <span class="metric-label">Live Clients</span>
-            </div>
-            <div class="metric-item">
-              <span class="metric-value" id="metricIngestTotal">—</span>
-              <span class="metric-label">Ext Total</span>
-            </div>
-            <div class="metric-item">
-              <span class="metric-value" id="metricIngestAcc">—</span>
-              <span class="metric-label">Ext Accepted</span>
-            </div>
-            <div class="metric-item">
-              <span class="metric-value" id="metricIngestDup">—</span>
-              <span class="metric-label">Ext Duplicates</span>
-            </div>
-            <div class="metric-item">
-              <span class="metric-value" id="metricIngestRej">—</span>
-              <span class="metric-label">Ext Rejected</span>
-            </div>
-          </div>
-        </section>
-
-      </div><!-- /.bottom-panels -->
-    </div><!-- /.dashboard-grid full-width -->
-
-  </main>
-  </div><!-- /.main-wrapper -->
-  </div><!-- /.app-layout -->
-
-  <!-- ─── MODALS ─────────────────────────────────────────── -->
-  <dialog id="newContestModal" class="admin-modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 class="panel-title">Create New Contest</h2>
-        <button id="closeModalBtn" class="btn-ghost btn-sm" aria-label="Close">✕</button>
+    <!-- Past Contests Section -->
+    <section class="contest-section past-section container reveal">
+      <div class="section-header">
+        <span class="eyebrow">Archival</span>
+        <h2 class="section-title">Past Contests</h2>
+        <p class="section-subtitle">History of previous champions and top scores.</p>
       </div>
-      <form id="newContestForm" novalidate>
-        <div class="form-group">
-          <label class="form-label" for="ncName">Contest Name</label>
-          <input class="form-input" type="text" id="ncName" required placeholder="e.g. Summer Hackathon" />
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="ncId">Contest ID (Slug)</label>
-          <input class="form-input" type="text" id="ncId" required placeholder="e.g. summer-hackathon" />
-          <span class="form-hint">Auto-generated, editable (no spaces)</span>
-        </div>
-        <div class="form-row" style="display:flex;gap:12px">
-          <div class="form-group" style="flex:1">
-            <label class="form-label" for="ncExpectedUsers">Expected Users</label>
-            <input class="form-input" type="number" id="ncExpectedUsers" required min="1" max="1000" value="1000" />
-          </div>
-          <div class="form-group" style="flex:1">
-            <label class="form-label" for="ncMaxScore">Max Score</label>
-            <input class="form-input" type="number" id="ncMaxScore" required min="1" value="1000" />
-          </div>
-        </div>
-        <div class="form-row" style="display:flex;gap:12px;margin-top:12px;">
-          <div class="form-group" style="flex:1">
-            <label class="form-label" for="ncStart">Start Time (UTC)</label>
-            <input class="form-input" type="datetime-local" id="ncStart" required />
-          </div>
-          <div class="form-group" style="flex:1">
-            <label class="form-label" for="ncEnd">End Time (UTC)</label>
-            <input class="form-input" type="datetime-local" id="ncEnd" required />
-          </div>
-        </div>
-        <div class="form-group" style="margin-top:12px;">
-          <label class="form-label" for="ncDesc">Description</label>
-          <textarea class="form-input" id="ncDesc" rows="2" required placeholder="Brief contest rules or info..."></textarea>
-        </div>
-        <div id="ncError" class="search-error hidden" style="margin-top:12px;"></div>
-        <div class="modal-actions" style="margin-top:24px;display:flex;justify-content:flex-end;gap:12px;">
-          <button type="button" class="btn btn-ghost" id="cancelModalBtn">Cancel</button>
-          <button type="submit" class="btn btn-primary" id="submitContestBtn">Create Contest</button>
-        </div>
-      </form>
+      <div id="pastContestsGrid" class="contest-grid past-grid">
+        <!-- Injected by JS -->
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Features Section -->
+  <section id="features" class="features container section reveal">
+    <div class="section-header">
+      <span class="eyebrow">Features</span>
+      <h2 class="section-title">Engineered for Performance</h2>
+      <p class="section-subtitle">Everything you need to run high-stakes, real-time contests.</p>
     </div>
-  </dialog>
+    
+    <div class="feature-grid">
+      <div class="feature-card reveal" style="--delay: 1">
+        <div class="feature-icon">⚡</div>
+        <h3 class="feature-title">Real-Time SSE Updates</h3>
+        <p class="feature-desc">Push rank updates instantly to connected clients without aggressive polling using Server-Sent Events.</p>
+      </div>
+      <div class="feature-card reveal" style="--delay: 2">
+        <div class="feature-icon">📈</div>
+        <h3 class="feature-title">Dynamic Rank Movement</h3>
+        <p class="feature-desc">Track and visualize historical shifts in rank and compute percentiles on the fly.</p>
+      </div>
+      <div class="feature-card reveal" style="--delay: 3">
+        <div class="feature-icon">🏆</div>
+        <h3 class="feature-title">Contest Management</h3>
+        <p class="feature-desc">Create distinct upcoming, live, and ended contests with individual isolated leaderboards.</p>
+      </div>
+      <div class="feature-card reveal" style="--delay: 4">
+        <div class="feature-icon">🔌</div>
+        <h3 class="feature-title">Event Ingestion Ready</h3>
+        <p class="feature-desc">Safely ingest score deltas and absolute points from external APIs with strict deduplication.</p>
+      </div>
+      <div class="feature-card reveal" style="--delay: 5">
+        <div class="feature-icon">📋</div>
+        <h3 class="feature-title">Rich Activity Log</h3>
+        <p class="feature-desc">Monitor every submission and score change natively within the admin dashboard.</p>
+      </div>
+      <div class="feature-card reveal" style="--delay: 6">
+        <div class="feature-icon">🔔</div>
+        <h3 class="feature-title">Admin Notifications</h3>
+        <p class="feature-desc">Stay informed of lifecycle events like contests starting or ending with live alerts.</p>
+      </div>
+    </div>
+  </section>
 
-  <!-- ─── FOOTER ─────────────────────────────────────────── -->
+  <!-- How It Works Section -->
+  <section class="flow-section section container reveal">
+    <div class="section-header">
+      <span class="eyebrow">Infrastructure</span>
+      <h2 class="section-title">How It Works</h2>
+      <p class="section-subtitle">A simple, resilient, and ultra-fast data flow.</p>
+    </div>
+
+    <div class="flow-grid">
+      <div class="flow-step">
+        <div class="flow-number">1</div>
+        <h4>Event Ingest</h4>
+        <p>Admin or external system submits a score delta.</p>
+      </div>
+      <div class="flow-arrow">➔</div>
+      <div class="flow-step">
+        <div class="flow-number">2</div>
+        <h4>Redis Lua</h4>
+        <p>Atomic script calculates new rank and metadata.</p>
+      </div>
+      <div class="flow-arrow">➔</div>
+      <div class="flow-step">
+        <div class="flow-number">3</div>
+        <h4>FastAPI</h4>
+        <p>Validates logic and pushes payload to event bus.</p>
+      </div>
+      <div class="flow-arrow">➔</div>
+      <div class="flow-step">
+        <div class="flow-number">4</div>
+        <h4>SSE Push</h4>
+        <p>Dashboard flashes green as the row dynamically shifts.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta section container reveal">
+    <div class="cta-box">
+      <h2>Ready to launch your own real-time leaderboard?</h2>
+      <p>Dive straight into the admin dashboard to configure contests and monitor live activity.</p>
+      <a href="dashboard.html" class="btn btn-primary">Open Dashboard</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
   <footer class="site-footer">
-    <p>Leaderboard API running at <code>http://127.0.0.1:8000</code> &bull; Built with FastAPI &amp; Redis</p>
+    <div class="container">
+      <p>Built with FastAPI & Redis. Vercel-inspired UI.</p>
+    </div>
   </footer>
 
-  <script src="app.js"></script>
+  <script src="landing.js"></script>
 </body>
 </html>

@@ -143,7 +143,7 @@ function renderGrid(containerId, contests, renderFn) {
 
 function renderOngoingCard(c) {
   return `
-    <a href="index.html?contest=${c.contestId}" class="contest-card">
+    <a href="dashboard.html?contest=${c.contestId}" class="contest-card">
       <div class="card-header">
         <div>
           <h3 class="card-title">${c.name}</h3>
@@ -194,7 +194,7 @@ function renderUpcomingCard(c) {
 
 function renderPastCard(c) {
   return `
-    <a href="index.html?contest=${c.contestId}" class="contest-card">
+    <a href="dashboard.html?contest=${c.contestId}" class="contest-card">
       <div class="card-header">
         <div>
           <h3 class="card-title">${c.name}</h3>
