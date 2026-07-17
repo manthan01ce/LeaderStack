@@ -13,7 +13,7 @@ services:
   - type: web
     name: leaderstack-api
     env: docker
-    dockerfilePath: ./app/Dockerfile
+    dockerfilePath: ./Dockerfile
     plan: free
     healthCheckPath: /health
     envVars:
