@@ -19,6 +19,7 @@ services:
   api:
     build:
       context: .
+      dockerfile: ./Dockerfile
     container_name: leaderstack-api
     ports:
       - "8000:8000"        # API available at http://localhost:8000
