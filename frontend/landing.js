@@ -92,7 +92,7 @@ function initMockEngine() {
 // ── CONTEST ENGINE ────────────────────────────────────────
 async function initContests() {
   try {
-    const res = await fetch('https://app-image-latest-feve.onrender.com/contests');
+    const res = await fetch('http://127.0.0.1:8000/contests');
     const data = await res.json();
     if (res.ok && data.contests) {
       categorizeAndRenderContests(data.contests);
@@ -212,7 +212,7 @@ function renderPastCard(c) {
 
 async function fetchTopPerformer(contestId) {
   try {
-    const res = await fetch(`https://app-image-latest-feve.onrender.com/contests/${contestId}/leaderboard?limit=1`);
+    const res = await fetch(`http://127.0.0.1:8000/contests/${contestId}/leaderboard?limit=1`);
     const json = await res.json();
     const box = document.getElementById(`winner-${contestId}`);
     

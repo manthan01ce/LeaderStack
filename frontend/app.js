@@ -14,7 +14,7 @@
 'use strict';
 
 // ── CONFIG ─────────────────────────────────────────────────────
-const API_BASE         = 'https://app-image-latest-feve.onrender.com';
+const API_BASE         = 'http://127.0.0.1:8000';
 let currentMaxScore    = 1000;    // dynamically updated based on active contest
 const POLL_FAST_MS     = 3000;    // polling interval when SSE is offline
 const POLL_SLOW_MS     = 3000;   // polling interval when SSE is active
@@ -190,7 +190,7 @@ let currentSseRetryDelay = SSE_RETRY_MS || 2000;
  */
 async function apiFetch(path, opts = {}) {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 30000);
+  const timeoutId = setTimeout(() => controller.abort(), 8000);
   opts.signal = controller.signal;
 
   try {
@@ -299,7 +299,7 @@ function connectSSE() {
 
 async function pollHealth() {
   try {
-    const res  = await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(30000) });
+    const res  = await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(5000) });
     const data = await res.json();
 
     if (data.status === 'ok') {
