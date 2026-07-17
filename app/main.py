@@ -30,7 +30,7 @@ async def redis_exception_handler(request: Request, exc: redis.RedisError):
     )
 
 # ── Configuration ─────────────────────────────────────────────────
-REDIS_URL       = os.getenv("REDIS_URL")
+REDIS_URL       = os.getenv("REDIS_URL", "redis://red-d9d42ivaqgkc73crg2v0:6379")
 REDIS_HOST      = os.getenv("REDIS_HOST", "localhost")
 REDIS_PORT      = int(os.getenv("REDIS_PORT", 6379))
 MAX_SCORE       = 1000
