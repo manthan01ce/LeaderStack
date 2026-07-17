@@ -14,7 +14,7 @@
 'use strict';
 
 // ── CONFIG ─────────────────────────────────────────────────────
-const API_BASE         = 'https://leaderstack.onrender.com';
+const API_BASE         = 'https://app-image-latest-feve.onrender.com';
 let currentMaxScore    = 1000;    // dynamically updated based on active contest
 const POLL_FAST_MS     = 3000;    // polling interval when SSE is offline
 const POLL_SLOW_MS     = 3000;   // polling interval when SSE is active
