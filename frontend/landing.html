@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Real-time contest leaderboard system powered by FastAPI and Redis." />
+  <title>LeaderStack — Real-Time Ranking Engine</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="landing.css" />
+</head>
+<body>
+  
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-inner container">
+      <div class="nav-brand">
+        <span class="brand-icon">⚡</span>
+        <span class="brand-text">LeaderStack Engine</span>
+      </div>
+      <div class="nav-links">
+        <a href="#contests" class="nav-link">Contests</a>
+        <a href="#features" class="nav-link">Features</a>
+        <a href="index.html" class="btn btn-secondary btn-sm" style="border-radius: 6px;">Admin Dashboard</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero container reveal">
+    <div class="hero-bg-gradient"></div>
+    <div class="hero-content">
+      <a href="#contests" class="hero-pill">
+        <span class="pill-badge">New</span> Introducing Contest Hub ➔
+      </a>
+      <h1 class="hero-title">Real-time rankings <span class="text-gradient">at scale.</span></h1>
+      <p class="hero-subtitle">
+        A high-performance leaderboard system powered by Redis and FastAPI. Manage contests, track live rank movements, and push updates instantly to thousands of clients.
+      </p>
+      <div class="hero-ctas">
+        <a href="index.html" class="btn btn-primary">Open Live Dashboard</a>
+        <a href="#contests" class="btn btn-secondary">Explore Contests</a>
+      </div>
+    </div>
+
+    <!-- Live Product Preview -->
+    <div class="hero-visual">
+      <div class="mock-window">
+        <div class="mock-header">
+          <div class="mock-dots"><span></span><span></span><span></span></div>
+          <div class="mock-title">Live Preview</div>
+        </div>
+        <div class="mock-body">
+          <div class="mock-table-header">
+            <span>Rank</span>
+            <span>Participant</span>
+            <span>Score</span>
+            <span>Move</span>
+          </div>
+          <div class="mock-rows" id="mockRows">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contests Hub -->
+  <div id="contests" class="contests-hub">
+    
+    <!-- Ongoing Contests Section -->
+    <section class="contest-section ongoing-section container reveal">
+      <div class="section-header">
+        <span class="eyebrow live-eyebrow"><span class="live-dot"></span> Live Now</span>
+        <h2 class="section-title">Ongoing Contests</h2>
+        <p class="section-subtitle">Real-time action happening right now.</p>
+      </div>
+      <div id="ongoingContestsGrid" class="contest-grid">
+        <!-- Injected by JS -->
+      </div>
+    </section>
+
+    <!-- Upcoming Contests Section -->
+    <section class="contest-section upcoming-section container reveal">
+      <div class="section-header">
+        <span class="eyebrow">Scheduled</span>
+        <h2 class="section-title">Upcoming Contests</h2>
+        <p class="section-subtitle">Prepare for the next big event.</p>
+      </div>
+      <div id="upcomingContestsGrid" class="contest-grid">
+        <!-- Injected by JS -->
+      </div>
+    </section>
+
+    <!-- Past Contests Section -->
+    <section class="contest-section past-section container reveal">
+      <div class="section-header">
+        <span class="eyebrow">Archival</span>
+        <h2 class="section-title">Past Contests</h2>
+        <p class="section-subtitle">History of previous champions and top scores.</p>
+      </div>
+      <div id="pastContestsGrid" class="contest-grid past-grid">
+        <!-- Injected by JS -->
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Features Section -->
+  <section id="features" class="features container section reveal">
+    <div class="section-header">
+      <span class="eyebrow">Features</span>
+      <h2 class="section-title">Engineered for Performance</h2>
+      <p class="section-subtitle">Everything you need to run high-stakes, real-time contests.</p>
+    </div>
+    
+    <div class="feature-grid">
+      <div class="feature-card reveal" style="--delay: 1">
+        <div class="feature-icon">⚡</div>
+        <h3 class="feature-title">Real-Time SSE Updates</h3>
+        <p class="feature-desc">Push rank updates instantly to connected clients without aggressive polling using Server-Sent Events.</p>
+      </div>
+      <div class="feature-card reveal" style="--delay: 2">
+        <div class="feature-icon">📈</div>
+        <h3 class="feature-title">Dynamic Rank Movement</h3>
+        <p class="feature-desc">Track and visualize historical shifts in rank and compute percentiles on the fly.</p>
+      </div>
+      <div class="feature-card reveal" style="--delay: 3">
+        <div class="feature-icon">🏆</div>
+        <h3 class="feature-title">Contest Management</h3>
+        <p class="feature-desc">Create distinct upcoming, live, and ended contests with individual isolated leaderboards.</p>
+      </div>
+      <div class="feature-card reveal" style="--delay: 4">
+        <div class="feature-icon">🔌</div>
+        <h3 class="feature-title">Event Ingestion Ready</h3>
+        <p class="feature-desc">Safely ingest score deltas and absolute points from external APIs with strict deduplication.</p>
+      </div>
+      <div class="feature-card reveal" style="--delay: 5">
+        <div class="feature-icon">📋</div>
+        <h3 class="feature-title">Rich Activity Log</h3>
+        <p class="feature-desc">Monitor every submission and score change natively within the admin dashboard.</p>
+      </div>
+      <div class="feature-card reveal" style="--delay: 6">
+        <div class="feature-icon">🔔</div>
+        <h3 class="feature-title">Admin Notifications</h3>
+        <p class="feature-desc">Stay informed of lifecycle events like contests starting or ending with live alerts.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="flow-section section container reveal">
+    <div class="section-header">
+      <span class="eyebrow">Infrastructure</span>
+      <h2 class="section-title">How It Works</h2>
+      <p class="section-subtitle">A simple, resilient, and ultra-fast data flow.</p>
+    </div>
+
+    <div class="flow-grid">
+      <div class="flow-step">
+        <div class="flow-number">1</div>
+        <h4>Event Ingest</h4>
+        <p>Admin or external system submits a score delta.</p>
+      </div>
+      <div class="flow-arrow">➔</div>
+      <div class="flow-step">
+        <div class="flow-number">2</div>
+        <h4>Redis Lua</h4>
+        <p>Atomic script calculates new rank and metadata.</p>
+      </div>
+      <div class="flow-arrow">➔</div>
+      <div class="flow-step">
+        <div class="flow-number">3</div>
+        <h4>FastAPI</h4>
+        <p>Validates logic and pushes payload to event bus.</p>
+      </div>
+      <div class="flow-arrow">➔</div>
+      <div class="flow-step">
+        <div class="flow-number">4</div>
+        <h4>SSE Push</h4>
+        <p>Dashboard flashes green as the row dynamically shifts.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta section container reveal">
+    <div class="cta-box">
+      <h2>Ready to launch your own real-time leaderboard?</h2>
+      <p>Dive straight into the admin dashboard to configure contests and monitor live activity.</p>
+      <a href="index.html" class="btn btn-primary">Open Dashboard</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>Built with FastAPI & Redis. Vercel-inspired UI.</p>
+    </div>
+  </footer>
+
+  <script src="landing.js"></script>
+</body>
+</html>

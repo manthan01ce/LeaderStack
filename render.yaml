@@ -1,0 +1,24 @@
+services:
+  # ──────────────────────────────────────────────────────────
+  # Redis - Managed Key/Value Service
+  # ──────────────────────────────────────────────────────────
+  - type: redis
+    name: leaderstack-redis
+    ipAllowList: [] # empty means allow all Render internal, block external
+    plan: free
+
+  # ──────────────────────────────────────────────────────────
+  # FastAPI Web Service
+  # ──────────────────────────────────────────────────────────
+  - type: web
+    name: leaderstack-api
+    env: docker
+    dockerfilePath: ./app/Dockerfile
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: leaderstack-redis
+          property: connectionString

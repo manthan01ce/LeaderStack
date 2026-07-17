@@ -1,0 +1,47 @@
+services:
+
+  # ── Redis ────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: leaderstack-redis
+    ports:
+      - "6379:6379"        # Expose for local redis-cli / seed.py access
+    volumes:
+      - redis_data:/data   # Persist leaderboard data across restarts
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ── FastAPI app ───────────────────────────────────────────────
+  api:
+    build:
+      context: ./app       # Dockerfile lives in ./app/
+    container_name: leaderstack-api
+    ports:
+      - "8000:8000"        # API available at http://localhost:8000
+    environment:
+      - REDIS_HOST=redis   # Docker service name resolves inside the network
+      - REDIS_PORT=6379
+    depends_on:
+      redis:
+        condition: service_healthy   # Wait for Redis to be ready first
+    restart: unless-stopped
+
+  # ── Frontend Dashboard ─────────────────────────────────────────
+  frontend:
+    image: nginx:alpine
+    container_name: leaderstack-frontend
+    ports:
+      - "5500:80"          # Expose frontend on http://localhost:5500
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro  # Mount static files as read-only
+    depends_on:
+      - api
+    restart: unless-stopped
+
+# Named volume so Redis data survives container restarts
+volumes:
+  redis_data:
